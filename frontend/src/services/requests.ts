@@ -6,5 +6,5 @@ const api = axios.create({
 
 export const getTasks = () => api.get("/");
 export const createTask = (title: string) => api.post("/", {title: title} );
-export const toggleTask = (id: number) => api.put(`/${id}/toggle`);
+export const toggleTask = (id: number, title: string, completed: boolean) => api.put(`/${id}`, { title, completed });
 export const deleteTask = (id: number) => api.delete(`/${id}`);

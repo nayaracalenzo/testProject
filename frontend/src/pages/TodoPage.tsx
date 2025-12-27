@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Container, Fab, Grid, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { TaskItem } from "../components/TaskItem";
-import { getTasks, createTask, toggleTask, deleteTask } from "../services/requests";
+import { getTasks, createTask, deleteTask, toggleTask } from "../services/requests";
 import { ModalTask } from "../components/ModalTask";
 import { theme } from "../styles/theme";
 
@@ -12,15 +12,11 @@ interface Task {
   completed: boolean;
 }
 
+
 export function TodoPage() {
-  const [tasks, setTasks] = useState<Task[]>([
-    { 
-      id: 1,
-      title: "resolver bugs", 
-      completed: false 
-    },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [open, setOpen] = useState(false);
+
 
   const loadTasks = async () => {
     const res = await getTasks();
@@ -30,11 +26,10 @@ export function TodoPage() {
   });
   };
 
+
   useEffect(() => {
     loadTasks();
   }, []);
-
-
 
 
   return (
@@ -45,12 +40,13 @@ export function TodoPage() {
           minWidth: "100%",
           height: "100vh",
           py: 4,
+          overflowY: "auto",
           backgroundColor: theme.palette.background.default,
         }}
       >
         <Typography
-          variant="h4"
-          sx={{ color: "#fff" }}
+          variant="h1"
+          sx={{ color: "#fff", fontSize: "36px" }}
           textAlign={"center"}
           fontWeight={700}
           mb={3}
@@ -63,13 +59,15 @@ export function TodoPage() {
             <Grid item xs={12} md={6} lg={4} key={item.id}>
               <TaskItem
                 {...item}
-                onToggle={() =>
+                onToggle={() =>{
                   setTasks(
                     (prev) =>
-                      prev.map((t) => ({ ...t, completed: !item.completed })),
+                      prev.map((t) => t.id === item.id ? { ...t, completed: !item.completed } : t),
                   )
-                }
+                  toggleTask(item.id, item.title, !item.completed).then(loadTasks);
+                }}
                 onDelete={() => deleteTask(item.id).then(loadTasks)}
+                onUpdated={loadTasks}
               />
             </Grid>
           ))}
@@ -87,10 +85,11 @@ export function TodoPage() {
           open={open}
           onClose={() => setOpen(false)}
           onCreate={(title) => {
-            createTask(title);
             createTask(title).then(loadTasks);
-          }}
-        />
+          } }
+          mode="create" 
+          onUpdate={() => {}} 
+          />
       </Container>
     </>
   );

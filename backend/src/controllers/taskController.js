@@ -13,7 +13,7 @@ const getTask = async (req, res) => {
 
 const createTask = async (req, res) => {
   const { title } = req.body;
-  console.log(title)
+  if (title.trim() === "") console.log(title)
   const task = await TaskService.createTask(title);
   res.status(201).json(task);
 }
@@ -26,7 +26,7 @@ const updateTask = async (req, res) => {
 }
 
 const deleteTask = async (req, res) => {
-  const {id}= req.params
+  const id = req.params.id;
   const deleted = await TaskService.deleteTask(id);
   if (!deleted) return res.status(404).json({ error: 'Tarefa não encontrada' });
   res.json({ success: true });
@@ -35,4 +35,7 @@ const deleteTask = async (req, res) => {
 module.exports = {
   getAllTasks,
   getTask,
+  createTask,
+  updateTask,
+  deleteTask
 }

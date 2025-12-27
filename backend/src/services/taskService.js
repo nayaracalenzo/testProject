@@ -32,14 +32,11 @@ const updateTask = async (id, data) => {
   return task;
 };
 
-const deleteTask = async () => {
-  const last = await Task.findOne({
-    order: [['id', 'DESC']]
-  });
+const deleteTask = async (id) => {
+  const task = await Task.findByPk(id);
+  if (!task) return null;
 
-  if (!last) return null;
-
-  await last.destroy();
+  await task.destroy();
   return true;
 };
 
